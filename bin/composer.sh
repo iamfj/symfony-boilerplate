@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ ! -d "${PWD}/../../apps" ]; then
-  echo "NO"
+  echo "Error: Please execute this script from an app directory of your project!"
   exit 1;
 fi
 
