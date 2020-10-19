@@ -14,4 +14,7 @@ else
   export APP_ENV=dev
 fi
 
-docker exec -it "${APP_NAME}_${APP_ENV}_php" php -f "../apps/${APP_NAME}/bin/console" "${@}"
+docker-compose \
+  -f "${PWD}/../../docker/docker-compose.yml" \
+  -f "${PWD}/../../docker/environments/docker-compose.${APP_ENV}.yml" \
+  run --rm "${APP_NAME}" php -f "./bin/console" "${@}"

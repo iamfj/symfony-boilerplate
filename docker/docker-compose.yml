@@ -45,7 +45,6 @@ services:
     container_name: app_${APP_ENV:-dev}_nginx
     depends_on:
       - database
-      - php
     networks:
       - appNetwork
     ports:

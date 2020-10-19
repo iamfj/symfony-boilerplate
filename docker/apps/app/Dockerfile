@@ -9,14 +9,13 @@ RUN export DATABASE_URL= \
  && export APP_DEBUG=0 \
  && touch ./.env \
  && apk --update add --no-cache $PHPIZE_DEPS openssl-dev libzip-dev \
- && apk --update add --no-cache --virtual .build-deps composer yarn \
- && docker-php-ext-install pdo_mysql \
+ && apk --update add --no-cache --virtual .build-deps composer npm \
  && pecl install apcu \
- && docker-php-ext-install zip \
- && docker-php-ext-enable apcu \
+ && docker-php-ext-install zip pdo_mysql \
+ && docker-php-ext-enable apcu pdo_mysql \
  && composer install --no-dev --optimize-autoloader \
- && yarn install \
- && yarn encore production \
+ && npm install \
+ && npm run build \
  && php bin/console cache:clear \
  && apk del .build-deps \
  && rm -R ./assets ./node_modules ./*.json ./*.lock ./*.js
