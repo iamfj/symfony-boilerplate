@@ -1,0 +1,18 @@
+version: "3"
+
+services:
+  database:
+    ports:
+      - 3306:3306
+
+  app:
+    volumes:
+      - ../apps/app:/var/www/apps/app
+
+  php:
+    volumes:
+      - ../apps/app:/var/www/apps/app
+
+  nginx:
+    volumes:
+      - ../apps/app:/var/www/apps/app

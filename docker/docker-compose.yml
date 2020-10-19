@@ -1,0 +1,56 @@
+version: "3"
+
+networks:
+  appNetwork:
+    name: app_${APP_ENV:-dev}_network
+
+volumes:
+  appDatabaseVolume:
+    name: app_${APP_ENV:-dev}_database_volume
+
+services:
+  database:
+    image: mysql:8
+    container_name: app_${APP_ENV:-dev}_database
+    networks:
+      - appNetwork
+    env_file:
+      - ../environment/${APP_ENV:-dev}/stack.env
+    volumes:
+      - appDatabaseVolume:/var/lib/mysql
+
+  app:
+    build:
+      dockerfile: ./docker/apps/app/Dockerfile
+      context: ..
+    image: app:latest
+    container_name: app_${APP_ENV:-dev}_app
+    networks:
+      - appNetwork
+    volumes:
+      - ../environment/${APP_ENV:-dev}/app.app.env:/var/www/apps/app/.env
+
+  php:
+    image: php:7.4-fpm-alpine
+    container_name: app_${APP_ENV:-dev}_php
+    depends_on:
+      - app
+    networks:
+      - appNetwork
+    env_file:
+      - ../environment/${APP_ENV:-dev}/app.app.env
+
+  nginx:
+    image: nginx:1.19-alpine
+    container_name: app_${APP_ENV:-dev}_nginx
+    depends_on:
+      - database
+      - php
+    networks:
+      - appNetwork
+    ports:
+      - 80:80
+    volumes:
+      - ./apps/app/site.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./log/apps/app/error.log:/var/log/nginx/app_error.log
+      - ./log/apps/app/access.log:/var/log/nginx/app_access.log

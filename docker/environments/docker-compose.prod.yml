@@ -1,0 +1,18 @@
+version: "3"
+
+volumes:
+  gaestAppVolume:
+    name: app_${APP_ENV:-dev}_app_volume
+
+services:
+  gaest:
+    volumes:
+      - appAppVolume:/var/www/apps/app
+
+  php:
+    volumes:
+      - appAppVolume:/var/www/apps/app
+
+  nginx:
+    volumes:
+      - appAppVolume:/var/www/apps/app
