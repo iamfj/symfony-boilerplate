@@ -1,0 +1,14 @@
+version: "3"
+
+services:
+  sampleApp:
+    volumes:
+      - ../apps/sample:/var/www/apps/sample
+
+  sampleNginx:
+    volumes:
+      - ../apps/sample:/var/www/apps/sample
+
+  samplePhp:
+    volumes:
+      - ../apps/sample:/var/www/apps/sample

@@ -1,0 +1,5 @@
+/apps/**/var
+/apps/**/vendor
+/apps/**/public/build
+/apps/**/node_modules
+/apps/**/*.local

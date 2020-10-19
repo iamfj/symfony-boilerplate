@@ -1,54 +1,40 @@
 version: "3"
 
 networks:
-  appNetwork:
-    name: app_${APP_ENV:-dev}_network
+  stackNetwork:
+    name: stack_${APP_ENV:-dev}_network
+
+  stackTraefikNetwork:
+    external:
+      name: stack_${APP_ENV:-dev}_traefik_network
 
 volumes:
-  appDatabaseVolume:
-    name: app_${APP_ENV:-dev}_database_volume
+  stackDatabaseVolume:
+    name: stack_${APP_ENV:-dev}_database_volume
 
 services:
-  database:
+  stackDatabase:
     image: mysql:8
-    container_name: app_${APP_ENV:-dev}_database
+    container_name: stack_${APP_ENV:-dev}_database
     networks:
-      - appNetwork
+      - stackNetwork
     env_file:
       - ../environment/${APP_ENV:-dev}/stack.env
     volumes:
-      - appDatabaseVolume:/var/lib/mysql
+      - stackDatabaseVolume:/var/lib/mysql
 
-  app:
-    build:
-      dockerfile: ./docker/apps/app/Dockerfile
-      context: ..
-    image: app:latest
-    container_name: app_${APP_ENV:-dev}_app
+  stackTraefik:
+    image: traefik:2.3
+    container_name: stack_${APP_ENV:-dev}_traefik
     networks:
-      - appNetwork
-    volumes:
-      - ../environment/${APP_ENV:-dev}/app.app.env:/var/www/apps/app/.env:ro
-
-  php:
-    image: php:7.4-fpm-alpine
-    container_name: app_${APP_ENV:-dev}_php
-    depends_on:
-      - app
-    networks:
-      - appNetwork
-    env_file:
-      - ../environment/${APP_ENV:-dev}/app.app.env
-
-  nginx:
-    image: nginx:1.19-alpine
-    container_name: app_${APP_ENV:-dev}_nginx
-    depends_on:
-      - database
-    networks:
-      - appNetwork
+      - stackNetwork
+      - stackTraefikNetwork
+    command:
+      - --api.insecure=true
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      - --entrypoints.web.address=:80
     ports:
       - 80:80
     volumes:
-      - ./apps/app/site.conf:/etc/nginx/conf.d/default.conf:ro
-      - ../log/nginx:/var/log/nginx
+      - /var/run/docker.sock:/var/run/docker.sock:ro

@@ -1,0 +1,10 @@
+version: "3"
+
+services:
+  stackDatabase:
+    ports:
+      - 3306:3306
+
+  stackTraefik:
+    ports:
+      - 8080:8080

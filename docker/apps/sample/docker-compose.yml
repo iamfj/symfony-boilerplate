@@ -1,0 +1,39 @@
+version: "3"
+
+services:
+  sampleApp:
+    build:
+      dockerfile: ./docker/apps/sample/Dockerfile
+      context: ../
+    image: sample-app:latest
+    container_name: sample_${APP_ENV:-dev}_app
+    networks:
+      - stackNetwork
+    volumes:
+      - ../environment/${APP_ENV:-dev}/apps/sample.app.env:/var/www/apps/sample/.env:ro
+
+  samplePhp:
+    image: php:7.4-fpm-alpine
+    container_name: sample_${APP_ENV:-dev}_php
+    networks:
+      - stackNetwork
+    volumes:
+      - ../environment/${APP_ENV:-dev}/apps/sample.app.env:/var/www/apps/sample/.env:ro
+
+  sampleNginx:
+    image: nginx:1.19-alpine
+    container_name: sample_${APP_ENV:-dev}_nginx
+    depends_on:
+      - stackDatabase
+      - stackTraefik
+      - samplePhp
+    networks:
+      - stackNetwork
+      - stackTraefikNetwork
+    volumes:
+      - ../log/nginx:/var/log/nginx
+      - ./apps/sample/config/sample.conf:/etc/nginx/conf.d/default.conf:ro
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.sampleApp.rule=Host("sample.localhost")
+      - traefik.http.routers.sampleApp.entrypoints=web

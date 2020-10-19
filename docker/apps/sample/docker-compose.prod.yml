@@ -1,0 +1,18 @@
+version: "3"
+
+volumes:
+  sampleVolume:
+    name: sample_${APP_ENV:-dev}_volume
+
+services:
+  sampleApp:
+    volumes:
+      - sampleVolume:/var/www/apps/sample
+
+  stackNginx:
+    volumes:
+      - sampleVolume:/var/www/apps/sample
+
+  stackPhp:
+    volumes:
+      - sampleVolume:/var/www/apps/sample

@@ -14,7 +14,9 @@ else
   export APP_ENV=dev
 fi
 
-docker-compose \
-  -f "${PWD}/../../docker/docker-compose.yml" \
-  -f "${PWD}/../../docker/environments/docker-compose.${APP_ENV}.yml" \
-  run --rm "${APP_NAME}" php -f "./bin/console" "${@}"
+DOCKER_COMPOSE="docker-compose -f ../../docker/docker-compose.yml -f ../../docker/docker-compose.${APP_ENV}.yml "
+for file in $(ls ../../docker/apps/*/docker-compose.yml ../../docker/apps/*/docker-compose.$APP_ENV.yml); do
+  DOCKER_COMPOSE="${DOCKER_COMPOSE}-f ${file} "
+done
+
+$DOCKER_COMPOSE run --rm "${APP_NAME}App" php -f "./bin/console" "${@}"

@@ -1,7 +1,7 @@
 FROM php:7.4-alpine
 
-COPY --chown=1000:1000 ./apps/app /var/www/apps/app
-WORKDIR /var/www/apps/app
+COPY --chown=1000:1000 ./apps/sample /var/www/apps/sample
+WORKDIR /var/www/apps/sample
 
 RUN export DATABASE_URL= \
  && export APP_ENV=prod \
