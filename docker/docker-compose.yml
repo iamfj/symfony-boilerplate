@@ -28,7 +28,7 @@ services:
     networks:
       - appNetwork
     volumes:
-      - ../environment/${APP_ENV:-dev}/app.app.env:/var/www/apps/app/.env
+      - ../environment/${APP_ENV:-dev}/app.app.env:/var/www/apps/app/.env:ro
 
   php:
     image: php:7.4-fpm-alpine
@@ -52,5 +52,4 @@ services:
       - 80:80
     volumes:
       - ./apps/app/site.conf:/etc/nginx/conf.d/default.conf:ro
-      - ./log/apps/app/error.log:/var/log/nginx/app_error.log
-      - ./log/apps/app/access.log:/var/log/nginx/app_access.log
+      - ../log/nginx:/var/log/nginx

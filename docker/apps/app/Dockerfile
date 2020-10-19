@@ -7,6 +7,7 @@ RUN export DATABASE_URL= \
  && export APP_ENV=prod \
  && export SYMFONY_ENV=prod \
  && export APP_DEBUG=0 \
+ && touch ./.env \
  && apk --update add --no-cache $PHPIZE_DEPS openssl-dev libzip-dev \
  && apk --update add --no-cache --virtual .build-deps composer yarn \
  && docker-php-ext-install pdo_mysql \
